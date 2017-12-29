@@ -8,8 +8,16 @@
 
   export default class CrapBuddy extends wepy.component {
     methods = {
-      crapping() {
-        this.$emit('holy-crap', 'hola!')
+      async crapping() {
+        const self = this
+        const url = `${self.$parent.apiUrl}greeting`
+        try {
+          const resp = await wepy.request(url)
+          global.println(resp.data)
+          this.$emit('holy-crap', resp.data.timestamp)
+        } catch(e) {
+          global.error(e)
+        }
       }
     }
   }

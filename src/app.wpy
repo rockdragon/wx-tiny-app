@@ -27,16 +27,20 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    userInfo: null
+    userInfo: null,
+    apiUrl: 'https://wxa-sockets.snaplingo.net/api/',
+    systemInfo: null,
   }
 
   constructor () {
     super()
     this.use('requestfix')
+    this.use('promisify')
   }
 
   onLaunch() {
-    this.testAsync()
+    global.println = console.log
+    global.error = console.error
   }
 
   sleep (s) {
@@ -45,11 +49,6 @@ export default class extends wepy.app {
         resolve('promise resolved')
       }, s * 1000)
     })
-  }
-
-  async testAsync () {
-    const data = await this.sleep(3)
-    console.log(data)
   }
 
   getUserInfo(cb) {

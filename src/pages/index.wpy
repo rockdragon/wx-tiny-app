@@ -18,7 +18,8 @@
 <template>
     <view class="container">
         <panel>
-            <view class="title" slot="title">组件间通信</view>
+            <view class="title" slot="title">{{sdkVersion}}</view>
+            <video />
             <crap/>
             <crapBuddy/>
         </panel>
@@ -90,6 +91,7 @@
   import List from '../components/list'
   import Crap from '../components/crap'
   import CrapBuddy from '../components/crapbuddy'
+  import Video from '../components/video'
   import Panel from '@/components/panel' // alias example
   import Counter from 'counter' // alias example
   import Group from '../components/group'
@@ -106,6 +108,7 @@
       counter2: Counter,
       crap: Crap,
       crapBuddy: CrapBuddy,
+      video: Video,
       list: List,
       group: Group,
       toast: Toast
@@ -118,6 +121,7 @@
       userInfo: {
         nickName: '加载中...'
       },
+      sdkVersion: '',
       normalTitle: '原始标题',
       setTimeoutTitle: '标题三秒后会被修改',
       count: 0,
@@ -230,8 +234,17 @@
       }
     }
 
+    async printSystemInfo() {
+      const systemInfo = await wepy.getSystemInfo()
+      global.println(systemInfo)
+      this.sdkVersion = systemInfo.SDKVersion
+    }
+
     onLoad() {
+      this.printSystemInfo()
       let self = this
+      self.apiUrl = this.$parent.globalData.apiUrl
+      self.systemInfo = this.$parent.globalData.systemInfo
       this.$parent.getUserInfo(function (userInfo) {
         if (userInfo) {
           self.userInfo = userInfo

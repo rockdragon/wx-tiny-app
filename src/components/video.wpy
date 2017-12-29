@@ -1,0 +1,28 @@
+<template>
+    <view>
+        <live-player id="live-video"></live-player>
+    </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class Video extends wepy.component {
+    events = {
+      'holy-crap': async(arg, $event) => {
+        const self = this
+        try {
+          if (wx.canIUse('wx.createLivePlayerContext')) {
+            const context = await wx.createLivePlayerContext('live-video', self)
+            global.println(context)
+          } else {
+            wx.showToast({
+              title: 'can not live',
+            })
+          }
+        } catch(e) {
+          global.error(e)
+        }
+      }
+    }
+  }
+</script>
