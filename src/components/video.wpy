@@ -1,6 +1,8 @@
 <template>
     <view>
-        <live-player id="live-video"></live-player>
+        <live-player id="liveplayer"
+                     mode="RTC"
+                     background-mute="true"></live-player>
     </view>
 </template>
 <script>
@@ -9,11 +11,28 @@
   export default class Video extends wepy.component {
     events = {
       'holy-crap': async(arg, $event) => {
-        const self = this
         try {
-          if (wx.canIUse('wx.createLivePlayerContext')) {
-            const context = await wx.createLivePlayerContext('live-video', self)
-            global.println(context)
+          if (wx.createLivePlayerContext) {
+            global.println('[CAN]: createLivePlayerContext')
+            const player = wx.createLivePlayerContext('liveplayer', this)
+            player.play({
+              success: function(){
+                global.println('[CAN]: success')
+              },
+              fail: function(err){
+                console.log(`[CANT] ${err}`)
+              }
+            })
+//              .then(context => {
+//                global.println('[CAN]: context')
+//                context.play()
+//              })
+//              .catch(err => {
+//                wx.showToast({
+//                  title: err.toString()
+//                })
+//              })
+
           } else {
             wx.showToast({
               title: 'can not live',
