@@ -1,0 +1,16 @@
+<template>
+    <view>
+        <button @tap="crapping">emit 'holy-crap'</button>
+    </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class CrapBuddy extends wepy.component {
+    methods = {
+      crapping() {
+        this.$emit('holy-crap', 'hola!')
+      }
+    }
+  }
+</script>

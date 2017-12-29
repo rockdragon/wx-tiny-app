@@ -1,85 +1,95 @@
 <style lang="less">
-  .userinfo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    .userinfo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-  .userinfo-avatar {
-    width: 80rpx;
-    height: 80rpx;
-    border-radius: 50%;
-  }
+    .userinfo-avatar {
+        width: 80 rpx;
+        height: 80 rpx;
+        border-radius: 50%;
+    }
 
-  .userinfo-nickname {
-    color: #aaa;
-  }
+    .userinfo-nickname {
+        color: #aaa;
+    }
 </style>
 <template>
-  <view class="container">
-    <view class="userinfo" @tap="handleViewTap">
-      <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
-      <view class="userinfo-nickname">{{ userInfo.nickName }}</view>
+    <view class="container">
+        <panel>
+            <view class="title" slot="title">组件间通信</view>
+            <crap/>
+            <crapBuddy/>
+        </panel>
+
+        <view class="userinfo" @tap="handleViewTap">
+            <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
+            <view class="userinfo-nickname">{{ userInfo.nickName }}</view>
+        </view>
+
+        <panel>
+            <view class="title" slot="title">测试数据绑定</view>
+
+            <text class="info">{{normalTitle}}</text>
+            <text class="info">{{setTimeoutTitle}}</text>
+            <text class="info">{{mixin}}</text>
+            <text class="info">{{mynum}}</text>
+            <text class="info">{{now}}</text>
+            <button @tap="plus('a')" size="mini"> +  </button>
+        </panel>
+
+        <panel>
+            <view class="title" slot="title">其它测试</view>
+            <button @tap="toast" size="mini">第三方组件</button>
+            <button @tap="communicate" size="mini">组件通信</button>
+            <button @tap="tap" size="mini">混合TAP事件</button>
+        </panel>
+
+        <panel>
+            <view class="title" slot="title">测试并发网络请求</view>
+            <view>返回结果:
+                <text>{{netrst}}</text>
+            </view>
+            <button @tap="request" size="mini"> 点我发起10个请求 </button>
+        </panel>
+
+        <panel>
+            <view class="title" slot="title">测试组件</view>
+
+            <text class="testcounter">计数组件1: </text>
+            <view class="counterview">
+                <counter1 @index-emit.user="counterEmit"/>
+            </view>
+
+            <text class="testcounter">计数组件2: </text>
+
+            <view class="counterview">
+                <counter2 :num.sync="mynum"></counter2>
+            </view>
+        </panel>
+
+        <panel>
+            <view class="title" slot="title">测试组件Repeat</view>
+            <repeat for="{{groupList}}" index="index" item="item" key="key">
+                <group :grouplist="item" :indexa="index"></group>
+            </repeat>
+        </panel>
+
+        <panel>
+            <view class="title" slot="title">测试列表</view>
+            <list></list>
+        </panel>
+
+        <toast/>
     </view>
-
-    <panel>
-      <view class="title" slot="title">测试数据绑定</view>
-
-      <text class="info">{{normalTitle}}</text>
-      <text class="info">{{setTimeoutTitle}}</text>
-      <text class="info">{{mixin}}</text>
-      <text class="info">{{mynum}}</text>
-      <text class="info">{{now}}</text>
-      <button @tap="plus('a')" size="mini">  +  </button>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">其它测试</view>
-      <button @tap="toast" size="mini">第三方组件</button>
-      <button @tap="communicate" size="mini">组件通信</button>
-      <button @tap="tap" size="mini">混合TAP事件</button>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试并发网络请求</view>
-      <view>返回结果: <text>{{netrst}}</text></view>
-      <button @tap="request" size="mini"> 点我发起10个请求 </button>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试组件</view>
-
-      <text class="testcounter">计数组件1: </text>
-      <view class="counterview">
-        <counter1 @index-emit.user="counterEmit" />
-      </view>
-
-      <text class="testcounter">计数组件2: </text>
-
-      <view class="counterview">
-        <counter2 :num.sync="mynum"></counter2>
-      </view>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试组件Repeat</view>
-      <repeat for="{{groupList}}" index="index" item="item" key="key">
-        <group :grouplist="item" :indexa="index"></group>
-      </repeat>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试列表</view>
-      <list></list>
-    </panel>
-
-    <toast />
-  </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import List from '../components/list'
+  import Crap from '../components/crap'
+  import CrapBuddy from '../components/crapbuddy'
   import Panel from '@/components/panel' // alias example
   import Counter from 'counter' // alias example
   import Group from '../components/group'
@@ -94,6 +104,8 @@
       panel: Panel,
       counter1: Counter,
       counter2: Counter,
+      crap: Crap,
+      crapBuddy: CrapBuddy,
       list: List,
       group: Group,
       toast: Toast
@@ -211,6 +223,10 @@
       'index-emit': (...args) => {
         let $event = args[args.length - 1]
         console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
+      },
+      'holy-crap': (arg, $event) => {
+        console.log(`${this.$name} received ${$event.name} from ${$event.source.name}, and arg is: ${arg}`)
+        this.$broadcast($event.name, arg)
       }
     }
 

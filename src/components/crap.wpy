@@ -1,0 +1,23 @@
+<template>
+    <view>
+        {{eventString}}
+    </view>
+</template>
+<script>
+import wepy from 'wepy'
+
+export default class Crap extends wepy.component {
+  props = {
+    eventString: {
+      type: String
+    }
+  }
+
+  events = {
+    'holy-crap': (arg, $event) => {
+      this.eventString =
+        `${this.$name} received ${$event.name}from ${$event.source.name}, and arg is: ${arg}`
+    }
+  }
+}
+</script>
